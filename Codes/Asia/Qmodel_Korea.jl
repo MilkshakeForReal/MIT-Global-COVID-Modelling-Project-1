@@ -7,10 +7,9 @@ using Flux
 using DifferentialEquations
 using DiffEqFlux
 using LaTeXStrings
-
+using Random
 ######################## STAGE 1###############
-vars = matread("C:/Users/Raj/Desktop/2.168/COVID-19-master_latest/COVID-19-master/csse_covid_19_data/csse_covid_19_daily_reports/Rise_Korea_Track.mat")
-
+vars = matread("/root/autodl-nas/julia/GitHub/MIT-Global-COVID-Modelling-Project-1/Data/Asia/Rise_Korea_Track.mat")
 Random.seed!(50)
 
 Infected = vars["Korea_Infected_All"]
@@ -33,8 +32,9 @@ function QSIR(du, u, p, t)
     δ = abs(p[54])
     #γ = abs(γ_parameter)
     #δ = abs(δ_parameter)
-    un = [u[1]; u[2]; u[3]]
-    NN1 = abs(re(p[1:51])(un)[1])
+    #u = [S,I,R]
+    un = [u[1]; u[2]; u[3]] #input of NN
+    NN1 = abs(re(p[1:51])(un)[1]) #Q(t)
     du[1]=  - β*u[1]*(u[2])/u0[1]
     du[2] = β*u[1]*(u[2])/u0[1] - γ*u[2] - NN1*u[2]/u0[1]
     du[3] = γ*u[2] + δ*u[4]
@@ -42,7 +42,7 @@ function QSIR(du, u, p, t)
 end
 
 
-u0 = Float64[51000000.0, 578, 24, 10]
+u0 = Float64[51000000.0, 578, 24, 10] ##[N, ]
 tspan = (0, 99.0)
 datasize = 99;
 
